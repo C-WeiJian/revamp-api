@@ -6,13 +6,13 @@ from codeitsuisse import app
 
 # logger = logging.getLogger(__name__)
 
-@app.route('/hardcode', methods=['POST'])
-def evaluate():
-    data = request.get_json()
-    app.logger.info("data sent for evaluation {}".format(data))
-    inputValue = data.get("input")
-    result = inputValue * inputValue
-    app.logger.info("My result :{}".format(result))
+@app.route('/hardcode', methods=['GET'])
+def hardcode():
+    # data = request.get_json()
+    # app.logger.info("data sent for evaluation {}".format(data))
+    # inputValue = data.get("input")
+    # result = inputValue * inputValue
+    # app.logger.info("My result :{}".format(result))
 
     response = {
         "items":[
