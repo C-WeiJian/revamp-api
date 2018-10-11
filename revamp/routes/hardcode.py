@@ -6,11 +6,21 @@ from revamp import application as app
 from revamp import db
 
 # logger = logging.getLogger(__name__)
-
-
-@app.route('/user/<user_id>/list', methods=['GET'])
+@app.route('/user/<user_id>', methods=['GET'])
 def get_user_data(user_id):
     result = db.get(user_id)
+    return jsonify(result)
+
+@app.route('/user/<user_id>/shopping/add/list/<list_id>', methods=['GET'])
+def add_to_shopping(user_id, list_id):
+    # TODO
+    result = db.get(user_id)
+    return jsonify({"status":"api not working"})
+    return jsonify(result)
+
+@app.route('/user/<user_id>/list', methods=['GET'])
+def get_user_all_list(user_id):
+    result = db.get(user_id)['lists']
     return jsonify(result)
 
 
@@ -25,21 +35,23 @@ def get_user_list(user_id, list_id):
         }
     return jsonify(result)
 
+
 def calculate_price(items):
     price = 0
     for item in items:
         price += item['qty']*item['price']
     return price
 
+
 @app.route('/user/<user_id>/list/<list_id>/add/<item_id>', methods=['GET'])
-def add_item_to_list(user_id, list_id,item_id):
+def add_item_to_list(user_id, list_id, item_id):
     data = db.get(user_id)
     result = data['lists']
     if list_id in result:
         if int(item_id) in mapping:
             item = mapping[int(item_id)]
         else:
-            return jsonify({"error":"item not found"})
+            return jsonify({"error": "item not found"})
         added = False
         for i in range(len(data['lists'][list_id]['items'])):
             if data['lists'][list_id]['items'][i]['id'] == int(item_id):
@@ -50,14 +62,15 @@ def add_item_to_list(user_id, list_id,item_id):
             item['qty'] = 1
             data['lists'][list_id]['items'].append(item)
         db.update(user_id, data)
-        result = {"status":"item added"}
+        result = {"status": "item added"}
     else:
-        return jsonify({"error":"list not found"})
-    
+        return jsonify({"error": "list not found"})
+
     return jsonify(result)
 
+
 @app.route('/user/<user_id>/list/<list_id>/delete/<item_id>', methods=['GET'])
-def remove_item_from_list(user_id, list_id,item_id):
+def remove_item_from_list(user_id, list_id, item_id):
     data = db.get(user_id)
     result = data['lists']
     if list_id in result:
@@ -65,7 +78,7 @@ def remove_item_from_list(user_id, list_id,item_id):
             # item = mapping[int(item_id)]
             pass
         else:
-            return jsonify({"error":"item not found"})
+            return jsonify({"error": "item not found"})
         added = False
         for i in range(len(data['lists'][list_id]['items'])):
             if data['lists'][list_id]['items'][i]['id'] == int(item_id):
@@ -76,13 +89,14 @@ def remove_item_from_list(user_id, list_id,item_id):
                 added = True
                 break
         if not added:
-            return jsonify({"error":"item not in list"})
+            return jsonify({"error": "item not in list"})
         db.update(user_id, data)
-        result = {"status":"item removed"}
+        result = {"status": "item removed"}
     else:
-        return jsonify({"error":"list not found"})
-    
+        return jsonify({"error": "list not found"})
+
     return jsonify(result)
+
 
 @app.route('/catalogue', methods=['GET'])
 def get_catalogue():
@@ -326,4 +340,4 @@ for items in catalogue:
     all_item += catalogue[items]
 mapping = {}
 for item in all_item:
-    mapping[item["id"]]=item    
+    mapping[item["id"]] = item

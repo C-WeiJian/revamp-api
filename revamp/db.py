@@ -34,6 +34,9 @@ class DBConnection:
 				"current":{
 					"items":[]
 				}
+			},
+			"shopping":{
+				"items":[]
 			}
 		}
 		return data
