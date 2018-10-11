@@ -2,7 +2,7 @@
 
 from flask import request, jsonify
 
-from codeitsuisse import app
+from revamp import application as app
 
 # logger = logging.getLogger(__name__)
 
