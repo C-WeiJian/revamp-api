@@ -283,7 +283,8 @@ def get_item(item_id):
         }
     }
 
-    response = items[item_id]
+
+    response = mapping[items[item_id]]
     return jsonify(response)
 
 
