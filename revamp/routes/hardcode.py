@@ -6,17 +6,29 @@ from revamp import application as app
 from revamp import db
 
 # logger = logging.getLogger(__name__)
+
+
 @app.route('/user/<user_id>', methods=['GET'])
 def get_user_data(user_id):
     result = db.get(user_id)
     return jsonify(result)
 
+
 @app.route('/user/<user_id>/shopping/add/list/<list_id>', methods=['GET'])
-def add_to_shopping(user_id, list_id):
-    # TODO
+def add_list_to_shopping(user_id, list_id):
     result = db.get(user_id)
-    return jsonify({"status":"api not working"})
-    return jsonify(result)
+
+    if list_id not in result['lists']:
+        return jsonify({"error": "list not found"})
+    list_to_add = result['lists'][list_id]['items']
+    for i in range(len(list_to_add)):
+        list_to_add[i]['status'] = 'searching' 
+
+    result['shopping']['items'] += list_to_add
+    db.update(user_id, result)
+
+    return jsonify(result['shopping'])
+
 
 @app.route('/user/<user_id>/list', methods=['GET'])
 def get_user_all_list(user_id):
