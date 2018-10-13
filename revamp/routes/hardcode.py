@@ -14,6 +14,12 @@ def get_user_data(user_id):
     return jsonify(result)
 
 
+@app.route('/user/<user_id>/shopping', methods=['GET'])
+def get_shopping_list(user_id):
+    result = db.get(user_id)['shopping']
+    return jsonify(result)
+
+
 @app.route('/user/<user_id>/shopping/add/list/<list_id>', methods=['GET'])
 def add_list_to_shopping(user_id, list_id):
     result = db.get(user_id)
