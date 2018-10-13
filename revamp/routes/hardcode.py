@@ -57,6 +57,7 @@ def add_item_to_cart(user_id, vumark_id):
 
     item = mapping[item_id]
     item['status'] = 'in_cart'
+    item['qty'] = 1
     result['shopping']['items'].append(item)
     result['shopping']['subtotal'] = calculate_shopping_price(
         result['shopping']['items'])
@@ -86,7 +87,7 @@ def get_user_list(user_id, list_id):
             "discount": 0,
             "total": 0
         }
-        db.update(user_id,data)
+        db.update(user_id, data)
         result = {
             "items": []
         }
