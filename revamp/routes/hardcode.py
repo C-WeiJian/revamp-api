@@ -22,9 +22,40 @@ def add_list_to_shopping(user_id, list_id):
         return jsonify({"error": "list not found"})
     list_to_add = result['lists'][list_id]['items']
     for i in range(len(list_to_add)):
-        list_to_add[i]['status'] = 'searching' 
+        list_to_add[i]['status'] = 'searching'
 
     result['shopping']['items'] += list_to_add
+    db.update(user_id, result)
+
+    return jsonify(result['shopping'])
+
+
+@app.route('/user/<user_id>/shopping/add/item/<vumark_id>', methods=['GET'])
+def add_item_to_cart(user_id, vumark_id):
+    result = db.get(user_id)
+
+    item_id = vumark_to_id(vumark_id)
+    if not item_id:
+        return jsonify({"error": "invalid item"})
+
+    for i in range(len(result['shopping']['items'])):
+        if result['shopping']['items'][i]['id'] == item_id:
+            result['shopping']['items'][i]['status'] = 'in_cart'
+
+            result['shopping']['subtotal'] = calculate_shopping_price(
+                result['shopping']['items'])
+            result['shopping']['total'] = calculate_shopping_price(
+                result['shopping']['items'])
+            db.update(user_id, result)
+            return jsonify(result['shopping'])
+
+    item = mapping[item_id]
+    item['status'] = 'in_cart'
+    result['shopping']['items'].append(item)
+    result['shopping']['subtotal'] = calculate_shopping_price(
+        result['shopping']['items'])
+    result['shopping']['total'] = calculate_shopping_price(
+        result['shopping']['items'])
     db.update(user_id, result)
 
     return jsonify(result['shopping'])
@@ -55,6 +86,14 @@ def calculate_price(items):
     return price
 
 
+def calculate_shopping_price(items):
+    price = 0
+    for item in items:
+        if item['status'] == 'in_cart':
+            price += item['qty']*item['price']
+    return price
+
+
 @app.route('/user/<user_id>/list/<list_id>/add/<item_id>', methods=['GET'])
 def add_item_to_list(user_id, list_id, item_id):
     data = db.get(user_id)
@@ -73,6 +112,11 @@ def add_item_to_list(user_id, list_id, item_id):
         if not added:
             item['qty'] = 1
             data['lists'][list_id]['items'].append(item)
+
+        data['lists'][list_id]['subtotal'] = calculate_price(
+            data['lists'][list_id]['items'])
+        data['lists'][list_id]['total'] = calculate_price(
+            data['lists'][list_id]['items'])
         db.update(user_id, data)
         result = {"status": "item added"}
     else:
@@ -102,6 +146,10 @@ def remove_item_from_list(user_id, list_id, item_id):
                 break
         if not added:
             return jsonify({"error": "item not in list"})
+        data['lists'][list_id]['subtotal'] = calculate_price(
+            data['lists'][list_id]['items'])
+        data['lists'][list_id]['total'] = calculate_price(
+            data['lists'][list_id]['items'])
         db.update(user_id, data)
         result = {"status": "item removed"}
     else:
@@ -197,53 +245,43 @@ def get_item(item_id):
 
     items = {
         '0001': {
-            "id": 1,
-            "name": "jelly",
-            "price": 9.54,
-            "description": "wobbly wobbly wobbly wobbly wobbly ",
-            "country": "China",
-            "supplier": "CHINA NUMBA wan",
-            "rating": "4.2/5 (451 ratings)",
-            "serial": "54651598453",
-            "image": "http://blog.partypieces.co.uk/wp-content/uploads/2015/01/jan-2015-pineapplejelly.jpg"
+            "id": 1
         },
         '0002': {
-            "id": 2,
-            "name": "peanut",
-            "price": 15.24,
-            "description": "wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly ",
-            "country": "China",
-            "supplier": "CHINA NUMBA wan",
-            "rating": "4.2/5 (451 ratings)",
-            "serial": "54651598453",
-            "image": "https://www.sciencenews.org/sites/default/files/styles/growth_curve_main/public/2017/01/main/blogposts/011317_MR_peanut-allergies_main.jpg?itok=c8zS79Sb"
+            "id": 2
         },
         '0003': {
-            "id": 3,
-            "name": "shampoo",
-            "price": 1.00,
-            "description": "wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly ",
-            "country": "China",
-            "supplier": "CHINA NUMBA wan",
-            "rating": "4.2/5 (451 ratings)",
-            "serial": "54651598453",
-            "image": "https://images-na.ssl-images-amazon.com/images/I/716GPlRZ23L._SL1500_.jpg"
+            "id": 3
         },
         '0004': {
-            "id": 4,
-            "name": "spam",
-            "price": 0.25,
-            "description": "wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly wobbly ",
-            "country": "China",
-            "supplier": "CHINA NUMBA wan",
-            "rating": "4.2/5 (451 ratings)",
-            "serial": "54651598453",
-            "image": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Spam_can.png/220px-Spam_can.png"
+            "id": 4
         }
     }
 
     response = items[item_id]
     return jsonify(response)
+
+
+vumark = {
+    '0001': 11,
+    '0002': 21,
+    '0003': 33,
+    '0004': 13
+}
+
+
+def vumark_to_id(vumark_id):
+    if vumark_id in vumark:
+        return vumark[vumark_id]
+    else:
+        return 0
+
+
+def id_to_vumark(id):
+    for key in vumark:
+        if vumark[key] == id:
+            return key
+    return 0
 
 
 meat = [
@@ -254,7 +292,10 @@ meat = [
         "price": 7.40,
         "country": "Malaysia",
         "description": "Fresh chicken parts. Freshness guaranteed. Estimated product life for 3 days including delivery day.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13132878_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13132878_XL1.jpg",
+        "rating": "4.0/5 (451 ratings)",
+        "serial": "54651598453",
+        "supplier": "Kee Song"
     },
     {
         "id": 12,
@@ -263,7 +304,10 @@ meat = [
         "price": 4.10,
         "country": "Australia",
         "description": "Fresh pork direct flown from Australia.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13132878_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13132878_XL1.jpg",
+        "rating": "4.2/5 (451 ratings)",
+        "serial": "54651598453",
+        "supplier": "NTUC"
     },
     {
         "id": 13,
@@ -272,7 +316,10 @@ meat = [
         "price": 57.70,
         "country": "Japan",
         "description": "Steak sliced from A4 grade wagyu. Our Tochigi Wagyu is on par with many famous Japanese beef brands. Deriving from pure lineage, these black haired cattles are raised only by designated commercial farmers passing strict requirements. Smooth and marbled meat with rich flavor.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/media.redmart.com/newmedia/1600x/i/m/2000005002007_0094_1455666654471.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/media.redmart.com/newmedia/1600x/i/m/2000005002007_0094_1455666654471.jpg",
+        "rating": "4.9/5 (451 ratings)",
+        "serial": "54651598453",
+        "supplier": "Meatlovers"
     }
 ]
 vegetable = [
@@ -283,7 +330,10 @@ vegetable = [
         "price": 0.80,
         "country": "Singapore",
         "description": "Store at room temperature.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13032618_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13032618_XL1.jpg",
+        "rating": "4.7/5 (251 ratings)",
+        "serial": "17611295433",
+        "supplier": "Pasar"
     },
     {
         "id": 22,
@@ -292,7 +342,10 @@ vegetable = [
         "price": 1.40,
         "country": "Malaysia",
         "description": "No pesticide. No chemical fertiliser. Advanced Japanese lacto farming technology. Tasty and nutritious.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/12605904_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/12605904_XL1.jpg",
+        "rating": "4.2/5 (251 ratings)",
+        "serial": "27611295433",
+        "supplier": "Sakura"
     },
     {
         "id": 23,
@@ -301,7 +354,10 @@ vegetable = [
         "price": 0.90,
         "country": "Australia",
         "description": "The Australian carrots are extremely crunchy and are a rich source of vitamin A and antioxidant agents.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13000321_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13000321_XL1.jpg",
+        "rating": "4.1/5 (251 ratings)",
+        "serial": "97611295433",
+        "supplier": "Pasar"
     }
 ]
 fruit = [
@@ -312,7 +368,10 @@ fruit = [
         "price": 5.90,
         "country": "New Zealand",
         "description": "The fruit is two toned with a orange red blush that is commonly striped. The fruit also has sweet yellowish flesh and a crisp texture. The fruit is rich in fibre, antioxidants, vitamin C, A, potassium and iron.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13099853_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13099853_XL1.jpg",
+        "rating": "3.9/5 (251 ratings)",
+        "serial": "58734195433",
+        "supplier": "Apple Fiesta"
     },
     {
         "id": 32,
@@ -321,7 +380,10 @@ fruit = [
         "price": 2.90,
         "country": "Malaysia",
         "description": "The papaya has a red orange and yellow flesh that is soft to the touch. Its flesh is firm, juicy, aromatic and has a buttery sweetness. It has anti-inflammatory properties and contains Vitamin A and C. It can be used as garnish to make dishes attractive, added to fruit salads or blended with peanut butter for a tasty spread.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13004610_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13004610_XL1.jpg",
+        "rating": "4.4/5 (251 ratings)",
+        "serial": "58734195433",
+        "supplier": "Pasar"
     },
     {
         "id": 33,
@@ -330,7 +392,10 @@ fruit = [
         "price": 4.60,
         "country": "Australia",
         "description": "he fruit's exterior has a beautiful, bright and bumpy rind. Their sparkling orange interior is exceptionally sweet.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13052577_XL1.jpg"
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13052577_XL1.jpg",
+        "rating": "4.3/5 (251 ratings)",
+        "serial": "58734195433",
+        "supplier": "Sunkist"
     }
 ]
 dairy = []
