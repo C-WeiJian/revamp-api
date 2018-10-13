@@ -75,10 +75,18 @@ def get_user_all_list(user_id):
 
 @app.route('/user/<user_id>/list/<list_id>', methods=['GET'])
 def get_user_list(user_id, list_id):
-    result = db.get(user_id)['lists']
+    data = db.get(user_id)
+    result = data['lists']
     if list_id in result:
         result = result[list_id]
     else:
+        data['lists'][list_id] = {
+            "items": [],
+            "subtotal": 0,
+            "discount": 0,
+            "total": 0
+        }
+        db.update(user_id,data)
         result = {
             "items": []
         }
@@ -173,6 +181,14 @@ def get_catalogue():
 
 @app.route('/catalogue/<category>', methods=['GET'])
 def get_catalogue_by_cat(category):
+    category = category.lower()
+    if category == 'meats':
+        category = 'meat'
+    elif category == 'vegetables':
+        category = 'vegetable'
+    elif category == 'fruits':
+        category = 'fruit'
+
     if category in catalogue:
         result = catalogue[category]
     else:
