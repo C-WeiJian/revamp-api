@@ -311,7 +311,7 @@ def id_to_vumark(id):
 meat = [
     {
         "id": 11,
-        "name": "Kee Song Chicken - Kampong",
+        "name": "Chicken - Kampong",
         "weight": "900g",
         "price": 7.40,
         "country": "Malaysia",
@@ -335,7 +335,7 @@ meat = [
     },
     {
         "id": 13,
-        "name": "Meatlovers Tochigi Wagyu A4 Steak",
+        "name": "Tochigi Wagyu A4 Steak",
         "weight": "200g",
         "price": 57.70,
         "country": "Japan",
@@ -349,7 +349,7 @@ meat = [
 vegetable = [
     {
         "id": 21,
-        "name": "Pasar Xiao Bai Chye",
+        "name": "Xiao Bai Chye",
         "weight": "220g",
         "price": 0.80,
         "country": "Singapore",
@@ -361,7 +361,7 @@ vegetable = [
     },
     {
         "id": 22,
-        "name": "Sakura Pearl Brinjal",
+        "name": "Pearl Brinjal",
         "weight": "300g",
         "price": 1.40,
         "country": "Malaysia",
@@ -373,7 +373,7 @@ vegetable = [
     },
     {
         "id": 23,
-        "name": "Pasar Prepacked Carrots",
+        "name": "Prepacked Carrots",
         "weight": "500g",
         "price": 0.90,
         "country": "Australia",
@@ -387,7 +387,7 @@ vegetable = [
 fruit = [
     {
         "id": 31,
-        "name": "Apple Fiesta New Zealand Apple Bag - Royal Gala",
+        "name": "Apple Bag - Royal Gala",
         "weight": "1.3kg",
         "price": 5.90,
         "country": "New Zealand",
@@ -399,7 +399,7 @@ fruit = [
     },
     {
         "id": 32,
-        "name": "Pasar Hong Kong Papaya",
+        "name": "Hong Kong Papaya",
         "weight": "1.6kg",
         "price": 2.90,
         "country": "Malaysia",
@@ -411,7 +411,7 @@ fruit = [
     },
     {
         "id": 33,
-        "name": "Sunkist Delite Australian Mandarins",
+        "name": "Delite Australian Mandarins",
         "weight": "600g",
         "price": 4.60,
         "country": "Australia",
