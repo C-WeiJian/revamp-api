@@ -267,24 +267,7 @@ def hardcode2():
 
 @app.route('/item/<item_id>', methods=['GET'])
 def get_item(item_id):
-
-    items = {
-        '0001': {
-            "id": 1
-        },
-        '0002': {
-            "id": 2
-        },
-        '0003': {
-            "id": 3
-        },
-        '0004': {
-            "id": 4
-        }
-    }
-
-
-    response = mapping[items[item_id]]
+    response = mapping[vumark[item_id]]
     return jsonify(response)
 
 
