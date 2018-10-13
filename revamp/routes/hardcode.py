@@ -80,18 +80,20 @@ def get_user_list(user_id, list_id):
 
 
 def calculate_price(items):
-    price = 0
+    price_cents = 0
     for item in items:
-        price += item['qty']*item['price']
-    return price
+        item_cost_cents = int(item['price'] * 100)
+        price_cents += item['qty']*item_cost_cents
+    return price_cents/100
 
 
 def calculate_shopping_price(items):
-    price = 0
+    price_cents = 0
     for item in items:
         if item['status'] == 'in_cart':
-            price += item['qty']*item['price']
-    return price
+            item_cost_cents = int(item['price'] * 100)
+            price_cents += item['qty']*item_cost_cents
+    return price_cents/100
 
 
 @app.route('/user/<user_id>/list/<list_id>/add/<item_id>', methods=['GET'])
