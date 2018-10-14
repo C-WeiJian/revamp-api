@@ -74,7 +74,7 @@ def add_normal_item_to_cart(user_id, item_id):
     result = db.get(user_id)
 
     item_id = int(item_id)
-    if not item_id:
+    if item_id not in mapping:
         return jsonify({"error": "invalid item"})
 
     for i in range(len(result['shopping']['items'])):
@@ -307,6 +307,18 @@ def get_item(item_id):
     else:
         response['golden'] = False
     return jsonify(response)
+
+
+@app.route('/normal/item/<item_id>', methods=['GET'])
+def get_item_by_item_id(item_id):
+    item_id = int(item_id)
+    if item_id not in mapping:
+        return jsonify({"error": "invalid item"})
+    response = mapping[item_id]
+    response['golden'] = False
+    return jsonify(response)
+
+
 
 
 vumark = {
