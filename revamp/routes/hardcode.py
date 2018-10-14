@@ -40,6 +40,8 @@ def add_list_to_shopping(user_id, list_id):
 def add_item_to_cart(user_id, vumark_id):
     result = db.get(user_id)
 
+    if vumark_id not in vumark:
+        return jsonify({"error": "invalid vumark"})
     item_id = vumark_to_id(vumark_id)
     if not item_id:
         return jsonify({"error": "invalid item"})
