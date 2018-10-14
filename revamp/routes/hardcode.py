@@ -231,70 +231,70 @@ def get_catalogue_by_cat(category):
     # return jsonify(result)
 
 
-@app.route('/hardcode', methods=['GET'])
-def hardcode():
-    # data = request.get_json()
-    # app.logger.info("data sent for evaluation {}".format(data))
-    # inputValue = data.get("input")
-    # result = inputValue * inputValue
-    # app.logger.info("My result :{}".format(result))
+# @app.route('/hardcode', methods=['GET'])
+# def hardcode():
+#     # data = request.get_json()
+#     # app.logger.info("data sent for evaluation {}".format(data))
+#     # inputValue = data.get("input")
+#     # result = inputValue * inputValue
+#     # app.logger.info("My result :{}".format(result))
 
-    response = {
-        "items": [
-            {
-                "id": 1,
-                "name": "jelly",
-                "qty": 2,
-                "price": 9.54
-            }, {
-                "id": 2,
-                "name": "peanut",
-                "qty": 1,
-                "price": 15.24
-            }, {
-                "id": 3,
-                "name": "shampoo",
-                "qty": 3,
-                "price": 1.00
-            }, {
-                "id": 4,
-                "name": "spam",
-                "qty": 1,
-                "price": 0.25
-            }
-        ]
-    }
-    return jsonify(response)
-    # return jsonify(result)
+#     response = {
+#         "items": [
+#             {
+#                 "id": 1,
+#                 "name": "jelly",
+#                 "qty": 2,
+#                 "price": 9.54
+#             }, {
+#                 "id": 2,
+#                 "name": "peanut",
+#                 "qty": 1,
+#                 "price": 15.24
+#             }, {
+#                 "id": 3,
+#                 "name": "shampoo",
+#                 "qty": 3,
+#                 "price": 1.00
+#             }, {
+#                 "id": 4,
+#                 "name": "spam",
+#                 "qty": 1,
+#                 "price": 0.25
+#             }
+#         ]
+#     }
+#     return jsonify(response)
+#     # return jsonify(result)
 
 
-@app.route('/hardcode2', methods=['GET'])
-def hardcode2():
-    response = [
-        {
-            "id": 1,
-            "name": "jelly",
-            "qty": 2,
-            "price": 9.54
-        }, {
-            "id": 2,
-            "name": "peanut",
-            "qty": 1,
-            "price": 15.24
-        }, {
-            "id": 3,
-            "name": "shampoo",
-            "qty": 3,
-            "price": 1.00
-        }, {
-            "id": 4,
-            "name": "spam",
-            "qty": 1,
-            "price": 0.25
-        }
-    ]
+# @app.route('/hardcode2', methods=['GET'])
+# def hardcode2():
+#     response = [
+#         {
+#             "id": 1,
+#             "name": "jelly",
+#             "qty": 2,
+#             "price": 9.54
+#         }, {
+#             "id": 2,
+#             "name": "peanut",
+#             "qty": 1,
+#             "price": 15.24
+#         }, {
+#             "id": 3,
+#             "name": "shampoo",
+#             "qty": 3,
+#             "price": 1.00
+#         }, {
+#             "id": 4,
+#             "name": "spam",
+#             "qty": 1,
+#             "price": 0.25
+#         }
+#     ]
 
-    return jsonify(response)
+#     return jsonify(response)
 
 
 @app.route('/item/<item_id>', methods=['GET'])
