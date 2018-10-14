@@ -327,10 +327,10 @@ def reset_user(user_id):
 
 
 vumark = {
-    '0001': 11,
-    '0002': 21,
-    '0003': 33,
-    '0004': 11
+    '0001': 31,
+    '0002': 32,
+    '0003': 34,
+    '0004': 31
 }
 
 
@@ -460,6 +460,18 @@ fruit = [
         "rating": "4.3/5 (251 ratings)",
         "serial": "58734195433",
         "supplier": "Sunkist"
+    },
+    {
+        "id": 34,
+        "name": "Rock Melon",
+        "weight": "1.5kg",
+        "price": 8.50,
+        "country": "Australia",
+        "description": "Sweet but not over-sweet, a ripe cantaloupe has a beautiful floral aroma. The firm flesh has plenty of juice. This popular melon is perfect any time of day, and pairs deliciously with savory meats like prosciutto.",
+        "url": "https://s3-ap-southeast-1.amazonaws.com/media.redmart.com/newmedia/1600x/i/m/Sweet_Melon_a_1450227666847.JPG",
+        "rating": "4.8/5 (251 ratings)",
+        "serial": "12734195433",
+        "supplier": "Redmart"
     }
 ]
 dairy = []
