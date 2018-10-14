@@ -97,7 +97,7 @@ def get_user_list(user_id, list_id):
 def calculate_price(items):
     price_cents = 0
     for item in items:
-        item_cost_cents = int(item['price'] * 100)
+        item_cost_cents = int(round(item['price'] * 10)*10)
         price_cents += item['qty']*item_cost_cents
     return price_cents/100
 
@@ -106,7 +106,7 @@ def calculate_shopping_price(items):
     price_cents = 0
     for item in items:
         if item['status'] == 'in_cart':
-            item_cost_cents = int(item['price'] * 100)
+            item_cost_cents = int(round(item['price'] * 10)*10)
             price_cents += item['qty']*item_cost_cents
     return price_cents/100
 
@@ -267,7 +267,13 @@ def hardcode2():
 
 @app.route('/item/<item_id>', methods=['GET'])
 def get_item(item_id):
+    if item_id not in vumark:
+        return jsonify({"error": "vumark not registered"})
     response = mapping[vumark[item_id]]
+    if item_id == '0004':
+        response['golden'] = True
+    else:
+        response['golden'] = False
     return jsonify(response)
 
 
@@ -275,7 +281,7 @@ vumark = {
     '0001': 11,
     '0002': 21,
     '0003': 33,
-    '0004': 13
+    '0004': 11
 }
 
 
@@ -301,7 +307,7 @@ meat = [
         "price": 7.40,
         "country": "Malaysia",
         "description": "Fresh chicken parts. Freshness guaranteed. Estimated product life for 3 days including delivery day.",
-        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13132878_XL1.jpg",
+        "url": "https://s3-ap-southeast-1.amazonaws.com/www8.fairprice.com.sg/fpol/media/images/product/XL/13097670_XL1.jpg",
         "rating": "4.0/5 (451 ratings)",
         "serial": "54651598453",
         "supplier": "Kee Song"
