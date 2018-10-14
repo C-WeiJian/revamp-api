@@ -318,7 +318,12 @@ def get_item_by_item_id(item_id):
     response['golden'] = False
     return jsonify(response)
 
-
+@app.route('/user/<user_id>/reset', methods=['GET'])
+def reset_user(user_id):
+    db.get(user_id)
+    data = db.empty_json_data()
+    db.update(user_id,data)
+    return jsonify(data)
 
 
 vumark = {

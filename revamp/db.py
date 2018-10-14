@@ -59,6 +59,7 @@ class DBConnection:
         return result
 
     def update(self, user_id, json_data):
+        print(json_data)
         query = "UPDATE revamp_data SET user_data = %s WHERE user_id = %s;"
         data = (json.dumps(json_data), user_id)
         self.cur.execute(query, data)
