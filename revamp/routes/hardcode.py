@@ -36,7 +36,7 @@ def add_list_to_shopping(user_id, list_id):
     return jsonify(result['shopping'])
 
 
-@app.route('/user/<user_id>/shopping/add/item/<vumark_id>', methods=['GET'])
+@app.route('/user/<user_id>/shopping/add/item/vumark/<vumark_id>', methods=['GET'])
 def add_item_to_cart(user_id, vumark_id):
     result = db.get(user_id)
 
@@ -67,6 +67,36 @@ def add_item_to_cart(user_id, vumark_id):
 
     return jsonify(result['shopping'])
 
+@app.route('/user/<user_id>/shopping/add/item/normal/<item_id>', methods=['GET'])
+def add_normal_item_to_cart(user_id, item_id):
+    result = db.get(user_id)
+
+    item_id = int(item_id)
+    if not item_id:
+        return jsonify({"error": "invalid item"})
+
+    for i in range(len(result['shopping']['items'])):
+        if result['shopping']['items'][i]['id'] == item_id:
+            result['shopping']['items'][i]['status'] = 'in_cart'
+
+            result['shopping']['subtotal'] = calculate_shopping_price(
+                result['shopping']['items'])
+            result['shopping']['total'] = calculate_shopping_price(
+                result['shopping']['items'])
+            db.update(user_id, result)
+            return jsonify(result['shopping'])
+
+    item = mapping[item_id]
+    item['status'] = 'in_cart'
+    item['qty'] = 1
+    result['shopping']['items'].append(item)
+    result['shopping']['subtotal'] = calculate_shopping_price(
+        result['shopping']['items'])
+    result['shopping']['total'] = calculate_shopping_price(
+        result['shopping']['items'])
+    db.update(user_id, result)
+
+    return jsonify(result['shopping'])
 
 @app.route('/user/<user_id>/list', methods=['GET'])
 def get_user_all_list(user_id):
